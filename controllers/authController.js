@@ -11,7 +11,7 @@ const signUp = async (req, res, next) => {
     try {
         if (newUser) {
             res.status(201).json({
-                result: newUser,
+                result: newUser ? newUser : null,
                 mes: 'User created successfully'
             })
         }
