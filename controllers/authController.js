@@ -33,15 +33,18 @@ const signIn = async (req, res, next) => {
     try {
         const validUser = await User.findOne({ email })
         if (!validUser) return next(errorHandler(404, "User not found!"));
+
         const validPassword = bcryptjs.compareSync(password, validUser.password);
         if (!validPassword) return next(errorHandler(401, "Password is wrong"))
+
         const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        const { password: pass, ...userData } = validUser._doc
-        res.cookie('access_token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 })
+        const { password: pass, ...userData } = validUser._doc;
+
+        res.cookie("access_token", token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
         res.status(200).json({
             result: validUser ? userData : null,
             success: validUser ? true : false
-        })
+        });
     } catch (error) {
         next(error)
     }
