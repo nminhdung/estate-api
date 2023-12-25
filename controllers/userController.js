@@ -33,7 +33,23 @@ const updateUser = async (req, res, next) => {
         next(error)
     }
 }
+const deleteUser = async (req, res, next) => {
+    const { id } = req.user
+
+    if (req.params.id !== id) {
+        return next(errorHandler(401, 'You can only update your own account'))
+    }
+    try {
+        const deletedUser = await User.findByIdAndDelete(req.params.id)
+        res.status(200).json({
+            success: deletedUser ? true : false
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 export const userController = {
     test,
-    updateUser
+    updateUser,
+    deleteUser
 }
