@@ -72,11 +72,20 @@ export const google = async (req, res, next) => {
             res.cookie('access_token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 }).status(200).json(dataUser)
         }
     } catch (error) {
-        next(error)
+        next(error);
+    }
+}
+const signOut = async (req, res, next) => {
+    try {
+        res.clearCookie('access_token');
+        res.status(200).json('User has been logged out')
+    } catch (error) {
+        next(error);
     }
 }
 export const authController = {
     signUp,
     signIn,
-    google
+    google,
+    signOut
 }
