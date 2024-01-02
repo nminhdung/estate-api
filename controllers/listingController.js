@@ -19,13 +19,12 @@ const createListing = async (req, res, next) => {
 
 const deleteListing = async (req, res, next) => {
     const listing = await Listing.findById(req.params.id);
-   
+
     if (!listing) {
         return next(errorHandler(404, 'Listing not found'))
     }
 
-    if (req.user.id !== listing.userRef) {  
-
+    if (req.user.id !== listing.userRef) {
         return next(errorHandler(401, 'You can only delete your own listing'))
     }
     try {
@@ -38,10 +37,34 @@ const deleteListing = async (req, res, next) => {
         next(error)
     }
 }
+const updateListing = async (req, res, next) => {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+        return next(errorHandler(404, 'Listing not found'))
+    }
+
+    if (req.user.id !== listing.userRef) {
+        return next(errorHandler(401, 'You can only delete your own listing'))
+    }
+    try {
+        const updatedListing = await Listing.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        )
+        res.status(200).json({
+            success: updatedListing ? true : false,
+            rs: updatedListing ? updatedListing : null
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 
 
 export const listingController = {
     createListing,
-    deleteListing
+    deleteListing,
+    updateListing
 }
