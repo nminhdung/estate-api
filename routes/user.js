@@ -5,7 +5,7 @@ import { verifyToken } from "../middlewares/verifyUser.js";
 
 
 const router = express.Router();
-router.get('/test', userController.test);
+router.get('/listings/:id',verifyToken, userController.getListings);
 router.put('/update/:id', verifyToken, userController.updateUser);
 router.delete('/delete/:id', verifyToken, userController.deleteUser);
 

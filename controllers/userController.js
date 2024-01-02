@@ -1,6 +1,7 @@
 import { errorHandler } from "../middlewares/error.js";
 import bcryptjs from 'bcryptjs';
 import User from '../models/user.js';
+import Listing from "../models/listing.js";
 
 const test = (req, res) => {
     res.json({
@@ -49,8 +50,24 @@ const deleteUser = async (req, res, next) => {
         next(error)
     }
 }
+const getListings = async (req, res, next) => {
+    if (req.user.id === req.params.id) {
+        try {
+            const listings = await Listing.find({ userRef: req.params.id });
+            res.status(200).json({
+                success: listings ? true : false,
+                result: listings ? listings : []
+            });
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        return next(errorHandler(401, 'You can only view your own listings'))
+    }
+}
 export const userController = {
     test,
     updateUser,
-    deleteUser
+    deleteUser,
+    getListings
 }
