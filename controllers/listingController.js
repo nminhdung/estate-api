@@ -60,11 +60,28 @@ const updateListing = async (req, res, next) => {
         next(error)
     }
 }
+const getListing = async (req, res, next) => {
+
+    try {
+        const listing = await Listing.findById(req.params.id)
+        if (!listing) {
+            return next(errorHandler(404, 'Listing not found'))
+        }
+        res.status(200).json({
+            success: listing ? true : false,
+            rs: listing ? listing : null
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 
 
 export const listingController = {
     createListing,
     deleteListing,
-    updateListing
+    updateListing,
+    getListing
 }
