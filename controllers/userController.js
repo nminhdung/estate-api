@@ -65,9 +65,25 @@ const getListings = async (req, res, next) => {
         return next(errorHandler(401, 'You can only view your own listings'))
     }
 }
+const getUser = async (req, res, next) => {
+    const { id } = req.user;
+    try {
+        const user = await User.findById(id).select('-password')
+        if (!user) return next(errorHandler(404, 'User not found'))
+        console.log(user)
+        res.status(200).json({
+            success: user ? true : false,
+            result: user ? user : null
+        })
+    } catch (error) {
+        next(error);
+    }
+
+}
 export const userController = {
     test,
     updateUser,
     deleteUser,
-    getListings
+    getListings,
+    getUser
 }
