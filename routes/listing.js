@@ -8,6 +8,7 @@ router.post('/create', verifyToken, listingController.createListing)
 router.delete('/delete/:id', verifyToken, listingController.deleteListing)
 router.put('/update/:id', verifyToken, listingController.updateListing)
 router.get('/get-listing/:id', listingController.getListing)
+router.get('/get', listingController.getListings)
 
 
 export const listingRouter = router;
