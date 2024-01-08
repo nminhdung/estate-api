@@ -75,6 +75,44 @@ const getListing = async (req, res, next) => {
         next(error)
     }
 }
+const getListings = async (req, res, next) => {
+    try {
+        const limit = parseInt(req.query.limit) || 9;
+        const skip = parseInt(req.query.startIndex) || 0;
+        if (req.query.offer === undefined || req.query.offer === 'false') {
+            req.query.offer = { $in: [false, true] }
+        }
+        if (req.query.furnished === undefined || req.query.furnished === 'false') {
+            req.query.furnished = { $in: [false, true] }
+        }
+        if (req.query.parking === undefined || req.query.parking === 'false') {
+            req.query.parking = { $in: [false, true] }
+        }
+        if (req.query.type === undefined || req.query.type === 'all') {
+            req.query.type = { $in: ['sale', 'rent'] }
+        }
+        const searchTerm = req.query.searchTerm || '';
+        const sort = req.query.sort || 'createdAt';
+        const order = req.query.order || 'desc';
+
+        const listings = await Listing.find({
+            name: { $regex: searchTerm, $options: 'i' },
+            offer: req.query.offer,
+            furnished: req.query.furnished,
+            parking: req.query.parking,
+            type: req.query.type
+        }).sort({
+            [sort]: order
+        }).limit(limit).skip(skip)
+        return res.status(200).json({
+            success: listings ? true : false,
+            result: listings ? listings : []
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
 
 
 
@@ -83,5 +121,6 @@ export const listingController = {
     createListing,
     deleteListing,
     updateListing,
-    getListing
+    getListing,
+    getListings
 }
